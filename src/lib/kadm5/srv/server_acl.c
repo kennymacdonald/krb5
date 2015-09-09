@@ -581,6 +581,17 @@ kadm5int_acl_match_data(e1, e2, targetflag, ws)
             retval = 1;
 
     }
+    else if (targetflag && (e1->length > 1) && (e1->data[0] == '*' )) {
+        /* Target component starts with an asterisk, but not followed
+           by a decimal digit, so match on everything after the
+           asterisk. */
+        char *p;
+        if (p = strstr(e2->data, e1->data+1)) {
+            if ((strlen(p) == (e1->length-1)) && !strncmp(e1->data+1, p, strlen(p))) {
+                retval = 1;
+            }
+        }
+    }
     else {
         if ((e1->length == e2->length) &&
             (!strncmp(e1->data, e2->data, e1->length)))
